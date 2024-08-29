@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: LpTasks
+  datasource:
+    url: jdbc:postgresql://localhost:5432/
+    password: mistery123
+    username: postgres
