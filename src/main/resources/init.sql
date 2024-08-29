@@ -1,0 +1,16 @@
+CREATE DATABASE LpTasks;
+
+CREATE TABLE IF NOT EXISTS tasks(
+    id TEXT PRIMARY KEY,
+    title VARCHAR(50) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    category VARCHAR(50) NOT NULL,
+    priority VARCHAR(6) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS users(
+    id TEXT PRIMARY KEY,
+    user_name VARCHAR(100) NOT NULL UNIQUE ,
+    email VARCHAR(254) UNIQUE NOT NULL,
+    password TEXT NOT NULL
+);
