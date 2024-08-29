@@ -1,0 +1,13 @@
+version: '1.0'
+services:
+  db:
+    container_name: LpTaskPostgres
+    image: postgres:13.16
+    environment:
+      POSTGRES_USER: lukas
+      POSTGRES_PASSWORD: mistery123
+      POSTGRES_DB: LpTasks
+    volumes:
+      - './src/main/resources/sql/initialize.sql:/docker-entrypoint-initdb.d/initialize.sql'
+    ports:
+      - '5432:5432'
