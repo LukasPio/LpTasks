@@ -1,7 +1,11 @@
 spring:
+  cache:
+    type: redis
   application:
     name: LpTasks
   datasource:
-    url: jdbc:postgresql://localhost:5432/LpTasks/
+    url: jdbc:postgresql://localhost:5432/LpTasks
     password: mistery123
     username: lukas
+server:
+  port: 8080
