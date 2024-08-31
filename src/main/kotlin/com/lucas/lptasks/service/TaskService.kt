@@ -23,15 +23,22 @@ class TaskService(
     fun getTaskById(id: String): ApiResponse<out Any?> {
         return try {
             val task = taskRepository.findById(UUID.fromString(id))
-            return if (task.isEmpty) {
-                ApiResponse.badRequest("Not saved task with id: $id")
-            } else {
-                ApiResponse.success(task.get().toDTO(), "Successfully retrieved ${task.get().id}")
+            if (task.isEmpty) {
+                return ApiResponse.noTaskFoundById(id)
             }
+            return ApiResponse.success(task.get().toDTO(), "Successfully retrieved task: ${task.get().id}")
         } catch (e: IllegalArgumentException) {
-            ApiResponse.badRequest("$id is an invalid UUID")
+            return ApiResponse.invalidUUID()
         }
     }
+
+    fun saveTask(taskData: List<TaskRequestDTO>): ApiResponse<out Any?> =
+        try {
+            taskData.forEach { (taskRepository.save(it.toTask())) }
+            ApiResponse.created("Successfully saved all tasks")
+        } catch (e: DataAccessException) {
+            ApiResponse.internalError("Internal error while saving task")
+        }
 
     fun saveTask(taskData: TaskRequestDTO): ApiResponse<out Any?> {
         val task: Task = taskData.toTask()
