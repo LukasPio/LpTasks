@@ -1,4 +1,3 @@
-version: '1.0'
 services:
   db:
     container_name: LpTaskPostgres
@@ -11,6 +10,7 @@ services:
       - './src/main/resources/sql/initialize.sql:/docker-entrypoint-initdb.d/initialize.sql'
     ports:
       - '5432:5432'
+
   cache:
     container_name: LpTasksRedis
     image: redis:7.4.0
