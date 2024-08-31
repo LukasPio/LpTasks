@@ -1,9 +1,9 @@
 package com.lucas.lptasks.service
 
 import com.lucas.lptasks.dto.TaskRequestDTO
-import com.lucas.lptasks.model.Task
 import com.lucas.lptasks.repository.TaskRepository
 import com.lucas.lptasks.utils.ApiResponse
+import org.springframework.dao.DataAccessException
 import org.springframework.stereotype.Service
 import java.util.UUID
 
