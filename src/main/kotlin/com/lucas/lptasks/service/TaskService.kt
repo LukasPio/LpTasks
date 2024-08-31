@@ -40,9 +40,17 @@ class TaskService(
             ApiResponse.internalError("Internal error while saving task")
         }
 
-    fun saveTask(taskData: TaskRequestDTO): ApiResponse<out Any?> {
-        val task: Task = taskData.toTask()
-        taskRepository.save(task)
-        return ApiResponse.success(task.toDTO(), "Successfully saved task: ${task.id}")
+    fun deleteTask(id: String): ApiResponse<out Any?> {
+        try {
+            val uuid = UUID.fromString(id)
+            val existsTask: Boolean = taskRepository.existsById(uuid)
+            if (existsTask) {
+                taskRepository.deleteById(uuid)
+                return ApiResponse.success(null, "Successfully deleted task: $id")
+            }
+            return ApiResponse.noTaskFoundById(id)
+        } catch (e: IllegalArgumentException) {
+            return ApiResponse.invalidUUID()
+        }
     }
 }
