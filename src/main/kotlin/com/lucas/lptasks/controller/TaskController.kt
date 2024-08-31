@@ -25,11 +25,12 @@ class TaskController(
     ): ApiResponse<out Any?> = taskService.getTaskById(id)
 
     @PostMapping
-    fun saveTask(
-        @RequestBody taskData: TaskRequestDTO,
-    ): ApiResponse<out Any?> = taskService.saveTask(taskData)
     fun saveTasks(
         @RequestBody tasksToSave: List<TaskRequestDTO>,
     ): ApiResponse<out Any?> = taskService.saveTask(tasksToSave)
 
+    @DeleteMapping("/{id}")
+    fun deleteTask(
+        @PathVariable id: String,
+    ): ApiResponse<out Any?> = taskService.deleteTask(id)
 }
