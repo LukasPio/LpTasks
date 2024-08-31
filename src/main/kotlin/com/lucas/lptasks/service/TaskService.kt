@@ -21,7 +21,7 @@ class TaskService(
     }
 
     fun getTaskById(id: String): ApiResponse<out Any?> {
-        return try {
+        try {
             val task = taskRepository.findById(UUID.fromString(id))
             if (task.isEmpty) {
                 return ApiResponse.noTaskFoundById(id)
