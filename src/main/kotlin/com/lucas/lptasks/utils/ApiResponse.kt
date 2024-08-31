@@ -11,7 +11,9 @@ data class ApiResponse<T>(
             message: String,
         ): ApiResponse<T> = ApiResponse(body, message, 200)
 
-        fun <T> notFound(message: String): ApiResponse<T> = ApiResponse(null, message, 404)
+        fun created(message: String): ApiResponse<Unit> = ApiResponse(Unit, message, 201)
+
+        fun notFound(message: String): ApiResponse<Unit> = ApiResponse(Unit, message, 404)
 
         fun <T> badRequest(message: String): ApiResponse<T> = ApiResponse(null, message, 400)
     }
