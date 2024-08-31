@@ -16,5 +16,6 @@ data class ApiResponse<T>(
         fun notFound(message: String): ApiResponse<Unit> = ApiResponse(Unit, message, 404)
 
         fun <T> badRequest(message: String): ApiResponse<T> = ApiResponse(null, message, 400)
+        fun internalError(message: String): ApiResponse<Unit> = ApiResponse(Unit, message, 500)
     }
 }
