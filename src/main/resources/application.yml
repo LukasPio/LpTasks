@@ -10,7 +10,7 @@ spring:
   application:
     name: LpTasks
   datasource:
-    url: jdbc:postgresql://localhost:5432/LpTasks
+    url: jdbc:postgresql://127.0.0.1:5432/LpTasks
     password: mistery123
     username: lukas
 server:
