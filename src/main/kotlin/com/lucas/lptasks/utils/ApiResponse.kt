@@ -21,7 +21,7 @@ data class ApiResponse<T>(
 
         fun unauthorized(message: String): ApiResponse<Unit> = ApiResponse(Unit, message, 401)
 
-        private fun badRequest(message: String): ApiResponse<Unit> = ApiResponse(Unit, message, 400)
+        fun badRequest(message: String): ApiResponse<Unit> = ApiResponse(Unit, message, 400)
 
         fun invalidUUID(): ApiResponse<Unit> = badRequest("Invalid UUID")
 
