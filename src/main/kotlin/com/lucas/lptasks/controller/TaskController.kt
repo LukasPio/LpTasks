@@ -22,7 +22,7 @@ class TaskController(
     private val taskService: TaskService,
 ) {
     @GetMapping
-    fun getTasks(): ApiResponse<out Any?> = taskService.getAllTasks()
+    fun getAllTasks(): ApiResponse<out Any?> = taskService.getAllTasks()
 
     @GetMapping("/{id}")
     fun getTaskById(
@@ -32,7 +32,7 @@ class TaskController(
     @PostMapping
     fun saveTasks(
         @Valid @NotEmpty @RequestBody tasksToSave: List<TaskRequestDTO>,
-    ): ApiResponse<out Any?> = taskService.saveTask(tasksToSave)
+    ): ApiResponse<out Any?> = taskService.saveTasks(tasksToSave)
 
     @PutMapping("/{id}")
     fun updateTasks(

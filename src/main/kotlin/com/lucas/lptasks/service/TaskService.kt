@@ -29,7 +29,7 @@ class TaskService(
         }
     }
 
-    fun saveTask(taskData: List<TaskRequestDTO>): ApiResponse<out Any?> {
+    fun saveTasks(taskData: List<TaskRequestDTO>): ApiResponse<out Any?> {
         taskData.forEach { (taskRepository.save(it.toTask())) }
         return ApiResponse.created("Successfully saved all tasks")
     }
