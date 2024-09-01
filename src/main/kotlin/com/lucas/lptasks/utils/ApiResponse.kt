@@ -13,6 +13,8 @@ data class ApiResponse<T>(
 
         fun created(message: String): ApiResponse<Unit> = ApiResponse(Unit, message, 201)
 
+        fun noContent(message: String): ApiResponse<Unit> = ApiResponse(Unit, message, 204)
+
         fun notFound(message: String): ApiResponse<Unit> = ApiResponse(Unit, message, 404)
 
         fun internalError(message: String): ApiResponse<Unit> = ApiResponse(Unit, message, 500)
