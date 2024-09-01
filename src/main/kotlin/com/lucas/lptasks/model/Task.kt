@@ -1,4 +1,5 @@
 package com.lucas.lptasks.model
+import com.lucas.lptasks.dto.TaskRequestDTO
 import com.lucas.lptasks.dto.TaskResponseDTO
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -15,10 +16,10 @@ data class Task(
     @Column(name = "id", updatable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: UUID = UUID.randomUUID(),
-    val title: String,
-    val description: String,
-    val category: String,
-    val priority: String,
+    var title: String,
+    var description: String,
+    var category: String,
+    var priority: String,
 ) {
     fun toDTO(): TaskResponseDTO =
         TaskResponseDTO(
@@ -28,4 +29,11 @@ data class Task(
             category,
             priority,
         )
+
+    fun update(updateData: TaskRequestDTO) {
+        this.title = updateData.title
+        this.description = updateData.description
+        this.category = updateData.category
+        this.priority = updateData.priority
+    }
 }
