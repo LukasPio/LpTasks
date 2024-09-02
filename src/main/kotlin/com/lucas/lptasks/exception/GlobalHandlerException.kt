@@ -1,25 +1,43 @@
 package com.lucas.lptasks.exception
 
-import com.lucas.lptasks.utils.ApiResponse
+import com.lucas.lptasks.service.ResponseService
 import jakarta.validation.ConstraintViolationException
 import org.springframework.dao.DataAccessException
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.web.HttpRequestMethodNotSupportedException
+import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.servlet.resource.NoResourceFoundException
 
 @RestControllerAdvice
-class GlobalHandlerException {
+class GlobalHandlerException(
+    private val responseService: ResponseService,
+) {
+    @ExceptionHandler(NoResourceFoundException::class)
+    protected fun noResourceFound() = responseService.notFound("Invalid url provided")
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
+    protected fun httpRequestMethodNotSupported() = responseService.badRequest("The request method is not supported on actual url.")
+
     @ExceptionHandler(HttpMessageNotReadableException::class)
-    fun handleMessageNotReadable(e: HttpMessageNotReadableException): ApiResponse<Unit> =
-        ApiResponse.badRequest("Insufficient params were provided.")
+    protected fun httpMessageNotReadable() = responseService.badRequest("Non-existent params were provided on request body.")
+
+    @ExceptionHandler(MissingServletRequestParameterException::class)
+    protected fun missingServletRequestParameter() = responseService.badRequest("Insufficient request params were provided")
 
     @ExceptionHandler(ConstraintViolationException::class)
-    fun handleValidationExceptions(e: ConstraintViolationException): ApiResponse<Unit> =
-        ApiResponse.badRequest("All parameters are required.")
+    protected fun validationExceptions() = responseService.badRequest("All parameters on request body are required.")
 
     @ExceptionHandler(IllegalArgumentException::class)
-    fun handleIllegalArgument(e: IllegalArgumentException): ApiResponse<Unit> = ApiResponse.badRequest("Invalid parameters were provided.")
+    protected fun illegalArgument() = responseService.badRequest("Invalid values were provided.")
 
     @ExceptionHandler(DataAccessException::class)
-    fun dataAccess(): ApiResponse<Unit> = ApiResponse.internalError("An error occurred with database manipulation")
+    protected fun dataAccess() = responseService.internalError("An error occurred with saving/getting on database")
+
+    @ExceptionHandler(TaskNotFoundException::class)
+    protected fun taskNotFound() = responseService.taskNotFound()
+
+    @ExceptionHandler(InvalidTaskPriorityException::class)
+    protected fun invalidTaskPriority() = responseService.badRequest("Invalid priority provided")
 }
