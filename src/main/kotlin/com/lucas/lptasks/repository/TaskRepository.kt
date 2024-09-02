@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.UUID
 
 interface TaskRepository : JpaRepository<Task, UUID> {
-    fun existsTaskById(taskId: UUID): Boolean
+    fun findByTitle(title: String): List<Task>
 }
