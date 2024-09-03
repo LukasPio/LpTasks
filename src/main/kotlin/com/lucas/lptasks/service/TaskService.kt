@@ -81,4 +81,9 @@ class TaskService(
         return sortedTasks.map { it.toDTO() }
     }
 
+    fun getTasksByCategory(category: String): List<TaskResponseDTO> {
+        if (!taskDataValidator.isValidCategory(category)) throw InvalidTaskCategoryException()
+        val tasks = taskRepository.findByCategory(category)
+        return tasks.map { it.toDTO() }
+    }
 }
