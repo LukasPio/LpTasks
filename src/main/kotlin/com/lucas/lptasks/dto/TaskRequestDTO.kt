@@ -2,6 +2,7 @@ package com.lucas.lptasks.dto
 
 import com.lucas.lptasks.model.Task
 import jakarta.validation.constraints.NotEmpty
+import java.util.Locale
 import java.util.UUID
 
 data class TaskRequestDTO(
@@ -20,6 +21,6 @@ data class TaskRequestDTO(
             title,
             description,
             category,
-            priority,
+            priority.lowercase(Locale.getDefault()),
         )
 }
