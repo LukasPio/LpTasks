@@ -48,6 +48,14 @@ class TaskController(
         return responseService.success(task, "Successfully got task")
     }
 
+    @GetMapping("/sortByPriority")
+    fun getAllTasksOrderByPriority(
+        @RequestParam sortOrder: String?,
+    ): ApiResponse<List<TaskResponseDTO>> {
+        val tasks = taskService.getAllTasksOrderByPriority(sortOrder)
+        return responseService.fetchedAllTasks(tasks)
+    }
+
     @PostMapping
     fun saveTasks(
         @Valid @NotEmpty @RequestBody tasksToSave: List<TaskRequestDTO>,
