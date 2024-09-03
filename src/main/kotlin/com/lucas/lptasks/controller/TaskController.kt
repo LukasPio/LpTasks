@@ -56,6 +56,14 @@ class TaskController(
         return responseService.fetchedAllTasks(tasks)
     }
 
+    @GetMapping("/category")
+    fun getTasksByCategory(
+        @RequestParam category: String,
+    ): ApiResponse<List<TaskResponseDTO>> {
+        val tasks = taskService.getTasksByCategory(category)
+        return responseService.fetchedAllTasks(tasks)
+    }
+
     @PostMapping
     fun saveTasks(
         @Valid @NotEmpty @RequestBody tasksToSave: List<TaskRequestDTO>,
