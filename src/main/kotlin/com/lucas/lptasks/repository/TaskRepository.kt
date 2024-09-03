@@ -6,4 +6,6 @@ import java.util.UUID
 
 interface TaskRepository : JpaRepository<Task, UUID> {
     fun findByTitle(title: String): List<Task>
+
+    fun findByCategory(category: String): List<Task>
 }
