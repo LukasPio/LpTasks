@@ -2,17 +2,20 @@ package com.lucas.lptasks.service
 
 import com.lucas.lptasks.dto.TaskRequestDTO
 import com.lucas.lptasks.dto.TaskResponseDTO
+import com.lucas.lptasks.exception.InvalidOrderSortException
+import com.lucas.lptasks.exception.InvalidTaskCategoryException
 import com.lucas.lptasks.exception.InvalidTaskPriorityException
 import com.lucas.lptasks.exception.TaskNotFoundException
 import com.lucas.lptasks.model.Task
 import com.lucas.lptasks.repository.TaskRepository
-import com.lucas.lptasks.utils.DataValidator
+import com.lucas.lptasks.utils.TaskDataValidator
 import org.springframework.stereotype.Service
 import java.util.UUID
 
 @Service
 class TaskService(
     private val taskRepository: TaskRepository,
+    private val taskDataValidator: TaskDataValidator,
 ) {
     fun getAllTasks(): List<TaskResponseDTO> {
         val tasks = taskRepository.findAll().map { it.toDTO() }
@@ -21,15 +24,14 @@ class TaskService(
 
     fun getTaskById(id: String): TaskResponseDTO {
         val task = taskRepository.findById(UUID.fromString(id))
-        if (task.isEmpty) {
-            throw TaskNotFoundException()
-        }
+        if (task.isEmpty) throw TaskNotFoundException()
+
         return task.get().toDTO()
     }
 
     fun saveTasks(taskData: List<TaskRequestDTO>) {
         taskData.forEach {
-            if (DataValidator.isValidPriority(it.priority)) {
+            if (taskDataValidator.isValidPriority(it.priority)) {
                 taskRepository.save(it.toTask())
             } else {
                 throw InvalidTaskPriorityException()
@@ -52,7 +54,7 @@ class TaskService(
         val optionalTask = taskRepository.findById(UUID.fromString(id))
 
         if (optionalTask.isEmpty) throw TaskNotFoundException()
-        if (!DataValidator.isValidPriority(updateData.priority)) throw InvalidTaskPriorityException()
+        if (!taskDataValidator.isValidPriority(updateData.priority)) throw InvalidTaskPriorityException()
 
         val task: Task = optionalTask.get()
         task.update(updateData)
@@ -65,4 +67,18 @@ class TaskService(
         if (tasks.isEmpty()) throw TaskNotFoundException()
         return tasks.map { it.toDTO() }
     }
+
+    fun getAllTasksOrderByPriority(sortOrder: String?): List<TaskResponseDTO> {
+        val tasks = taskRepository.findAll()
+        if (sortOrder != null && !taskDataValidator.isValidOrderSort(sortOrder)) throw InvalidOrderSortException()
+        val priorityOrder: List<String> =
+            if (sortOrder == null || sortOrder.lowercase() == "asc") {
+                listOf("low", "medium", "high")
+            } else {
+                listOf("high", "medium", "low")
+            }
+        val sortedTasks = tasks.sortedBy { priorityOrder.indexOf(it.priority) }
+        return sortedTasks.map { it.toDTO() }
+    }
+
 }
