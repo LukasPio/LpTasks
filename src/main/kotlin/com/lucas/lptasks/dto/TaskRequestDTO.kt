@@ -1,8 +1,8 @@
 package com.lucas.lptasks.dto
 
+import com.lucas.lptasks.enum.TaskPriority
 import com.lucas.lptasks.model.Task
 import jakarta.validation.constraints.NotEmpty
-import java.util.Locale
 import java.util.UUID
 
 data class TaskRequestDTO(
@@ -13,7 +13,7 @@ data class TaskRequestDTO(
     @field:NotEmpty(message = "Category is required")
     val category: String,
     @field:NotEmpty(message = "Priority is required")
-    val priority: String,
+    val priority: TaskPriority,
 ) {
     fun toTask(): Task =
         Task(
@@ -21,6 +21,6 @@ data class TaskRequestDTO(
             title,
             description,
             category,
-            priority.lowercase(Locale.getDefault()),
+            priority.toString(),
         )
 }
