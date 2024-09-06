@@ -1,10 +1,13 @@
 spring:
+  security:
+    token:
+      secret: "encrypted123"
+    user:
+      name: lukas
   jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
+    open-in-view: true
   cache:
     type: redis
   application:
