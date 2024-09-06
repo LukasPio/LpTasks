@@ -4,7 +4,6 @@ import com.lucas.lptasks.dto.TaskRequestDTO
 import com.lucas.lptasks.dto.TaskResponseDTO
 import com.lucas.lptasks.exception.InvalidOrderSortException
 import com.lucas.lptasks.exception.InvalidTaskCategoryException
-import com.lucas.lptasks.exception.InvalidTaskPriorityException
 import com.lucas.lptasks.exception.TaskNotFoundException
 import com.lucas.lptasks.model.Task
 import com.lucas.lptasks.repository.TaskRepository
@@ -31,11 +30,7 @@ class TaskService(
 
     fun saveTasks(taskData: List<TaskRequestDTO>) {
         taskData.forEach {
-            if (taskDataValidator.isValidPriority(it.priority)) {
-                taskRepository.save(it.toTask())
-            } else {
-                throw InvalidTaskPriorityException()
-            }
+            taskRepository.save(it.toTask())
         }
     }
 
@@ -52,9 +47,7 @@ class TaskService(
         id: String,
     ): TaskResponseDTO {
         val optionalTask = taskRepository.findById(UUID.fromString(id))
-
         if (optionalTask.isEmpty) throw TaskNotFoundException()
-        if (!taskDataValidator.isValidPriority(updateData.priority)) throw InvalidTaskPriorityException()
 
         val task: Task = optionalTask.get()
         task.update(updateData)
