@@ -1,5 +1,6 @@
 package com.lucas.lptasks.service
 
+import com.lucas.lptasks.dto.LoginResponseDTO
 import com.lucas.lptasks.dto.TaskResponseDTO
 import com.lucas.lptasks.utils.ApiResponse
 import org.springframework.stereotype.Service
@@ -14,6 +15,8 @@ class ResponseService {
     fun created(message: String): ApiResponse<Unit> = ApiResponse(Unit, message, 201)
 
     fun noContent(message: String): ApiResponse<Unit> = ApiResponse(Unit, message, 204)
+
+    fun login(token: String): ApiResponse<LoginResponseDTO> = ApiResponse(LoginResponseDTO(token), "Successfully loged in", 200)
 
     fun internalError(message: String): ApiResponse<Unit> = ApiResponse(Unit, message, 500)
 
