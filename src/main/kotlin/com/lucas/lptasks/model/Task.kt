@@ -34,6 +34,6 @@ data class Task(
         this.title = updateData.title
         this.description = updateData.description
         this.category = updateData.category
-        this.priority = updateData.priority
+        this.priority = updateData.priority.toString()
     }
 }
