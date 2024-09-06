@@ -1,10 +1,13 @@
 package com.lucas.lptasks.exception
 
+import com.auth0.jwt.exceptions.JWTCreationException
+import com.auth0.jwt.exceptions.JWTVerificationException
 import com.lucas.lptasks.service.ResponseService
 import jakarta.validation.ConstraintViolationException
 import org.springframework.dao.DataAccessException
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.orm.jpa.JpaSystemException
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -35,6 +38,18 @@ class GlobalHandlerException(
 
     @ExceptionHandler(DataAccessException::class)
     protected fun dataAccess() = responseService.internalError("An error occurred with saving/getting on database")
+
+    @ExceptionHandler(UsernameNotFoundException::class)
+    protected fun userNameNotFound() = responseService.badRequest("Email is not registered")
+
+    @ExceptionHandler(EmailAlreadyRegisteredException::class)
+    protected fun emailAlreadyRegistered() = responseService.badRequest("Email already registered")
+
+    @ExceptionHandler(JWTCreationException::class)
+    protected fun jwtCreation() = responseService.internalError("Error while generating jwt token")
+
+    @ExceptionHandler(JWTVerificationException::class)
+    protected fun jwtVerification() = responseService.badRequest("Error while validating JWT token")
 
     @ExceptionHandler(TaskNotFoundException::class)
     protected fun taskNotFound() = responseService.taskNotFound()
