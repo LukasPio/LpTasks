@@ -1,67 +1,67 @@
 # LpTasks API
 
-API REST para gerenciamento de tarefas com autenticação JWT, construída com **Kotlin + Spring Boot**.
+REST API for task management with JWT authentication, built with **Kotlin + Spring Boot**.
 
 ---
 
-## 🛠️ Tecnologias
+## 🛠️ Technologies
 
 - **Kotlin** + **Spring Boot 3.3**
-- **PostgreSQL** — persistência de dados
+- **PostgreSQL** — data persistence
 - **Redis** — cache
-- **Spring Security** + **JWT (Auth0)** — autenticação e autorização
-- **Docker Compose** — infraestrutura local
-- **Maven** — gerenciamento de dependências
+- **Spring Security** + **JWT (Auth0)** — authentication and authorization
+- **Docker Compose** — local infrastructure
+- **Maven** — dependency management
 
 ---
 
-## 📋 Pré-requisitos
+## 📋 Prerequisites
 
 - Java 21+
 - Maven
-- Docker e Docker Compose
+- Docker and Docker Compose
 
 ---
 
-## 🚀 Como rodar
+## 🚀 How to run
 
-**1. Suba a infraestrutura (banco e cache):**
+**1. Bring up the infrastructure (database and cache):**
 
 ```bash
 docker-compose up -d
 ```
 
-**2. Execute a aplicação:**
+**2. Run the application:**
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-A API estará disponível em `http://localhost:8080`.
+The API will be available at `http://localhost:8080`.
 
 ---
 
-## 🔐 Autenticação
+## 🔐 Authentication
 
-A API utiliza **JWT Bearer Token**. Para acessar os endpoints protegidos, inclua o header:
+The API uses **JWT Bearer Token**. To access protected endpoints, include the header:
 
 ```
-Authorization: Bearer <seu_token>
+Authorization: Bearer <your_token>
 ```
 
-### Endpoints de autenticação
+### Authentication endpoints
 
-| Método | Endpoint | Acesso | Descrição |
+| Method | Endpoint | Access | Description |
 |--------|----------|--------|-----------|
-| `POST` | `/app/auth/register` | Público | Cadastrar novo usuário |
-| `POST` | `/app/auth/login` | Público | Realizar login e obter token |
+| `POST` | `/app/auth/register` | Public | Register a new user |
+| `POST` | `/app/auth/login` | Public | Log in and obtain a token |
 
-#### Registrar usuário
+#### Register user
 ```json
 POST /app/auth/register
 {
-  "email": "usuario@email.com",
-  "password": "senha123",
+  "email": "user@email.com",
+  "password": "password123",
   "isAdmin": false
 }
 ```
@@ -70,11 +70,11 @@ POST /app/auth/register
 ```json
 POST /app/auth/login
 {
-  "email": "usuario@email.com",
-  "password": "senha123"
+  "email": "user@email.com",
+  "password": "password123"
 }
 ```
-**Resposta:**
+**Response:**
 ```json
 {
   "body": { "token": "eyJhbGci..." },
@@ -85,46 +85,46 @@ POST /app/auth/login
 
 ---
 
-## ✅ Endpoints de Tarefas
+## ✅ Task Endpoints
 
-Todos os endpoints abaixo exigem autenticação.
+All endpoints below require authentication.
 
-| Método | Endpoint | Descrição |
+| Method | Endpoint | Description |
 |--------|----------|-----------|
-| `GET` | `/app/tasks` | Listar todas as tarefas |
-| `GET` | `/app/tasks/id?id={id}` | Buscar tarefa por ID |
-| `GET` | `/app/tasks/title?taskTitle={title}` | Buscar tarefas por título |
-| `GET` | `/app/tasks/category?category={category}` | Filtrar por categoria |
-| `GET` | `/app/tasks/sortByPriority?sortOrder={asc\|desc}` | Ordenar por prioridade |
-| `POST` | `/app/tasks` | Criar uma ou mais tarefas |
-| `PUT` | `/app/tasks/{id}` | Atualizar uma tarefa |
-| `DELETE` | `/app/tasks/{id}` | Deletar uma tarefa |
+| `GET` | `/app/tasks` | List all tasks |
+| `GET` | `/app/tasks/id?id={id}` | Find task by ID |
+| `GET` | `/app/tasks/title?taskTitle={title}` | Find tasks by title |
+| `GET` | `/app/tasks/category?category={category}` | Filter by category |
+| `GET` | `/app/tasks/sortByPriority?sortOrder={asc\|desc}` | Sort by priority |
+| `POST` | `/app/tasks` | Create one or more tasks |
+| `PUT` | `/app/tasks/{id}` | Update a task |
+| `DELETE` | `/app/tasks/{id}` | Delete a task |
 
-### Corpo da requisição (criar/atualizar)
+### Request body (create/update)
 
 ```json
 [
   {
-    "title": "Estudar Kotlin",
-    "description": "Revisar coroutines e flows",
+    "title": "Study Kotlin",
+    "description": "Review coroutines and flows",
     "category": "STUDY",
     "priority": "HIGH"
   }
 ]
 ```
 
-### Categorias disponíveis
+### Available categories
 
-| Valor |
+| Value |
 |-------|
 | `WORK` |
 | `STUDY` |
 | `HOBBY` |
 | `OTHER` |
 
-### Prioridades disponíveis
+### Available priorities
 
-| Valor |
+| Value |
 |-------|
 | `LOW` |
 | `MEDIUM` |
@@ -132,28 +132,28 @@ Todos os endpoints abaixo exigem autenticação.
 
 ---
 
-## 📦 Estrutura do projeto
+## 📦 Project structure
 
 ```
 src/main/kotlin/com/lucas/lptasks/
-├── controller/       # Camada de entrada (REST)
-├── service/          # Regras de negócio
-├── repository/       # Acesso ao banco de dados
-├── model/            # Entidades JPA
-├── dto/              # Objetos de transferência de dados
-├── security/         # Filtros JWT e configuração do Spring Security
-├── exception/        # Exceções customizadas e handler global
-├── enum/             # Enums de categoria e prioridade
-└── utils/            # Utilitários (validação, ApiResponse)
+├── controller/       # Entry layer (REST)
+├── service/          # Business logic
+├── repository/       # Database access
+├── model/            # JPA entities
+├── dto/              # Data transfer objects
+├── security/         # JWT filters and Spring Security configuration
+├── exception/        # Custom exceptions and global handler
+├── enum/             # Category and priority enums
+└── utils/            # Utilities (validation, ApiResponse)
 ```
 
 ---
 
-## 🗄️ Variáveis de ambiente / Configuração
+## 🗄️ Environment variables / Configuration
 
-As configurações ficam em `src/main/resources/application.yml`. Os valores padrão são:
+Settings live in `src/main/resources/application.yml`. The default values are:
 
-| Propriedade | Padrão |
+| Property | Default |
 |-------------|--------|
 | `server.port` | `8080` |
 | `datasource.url` | `jdbc:postgresql://127.0.0.1:5432/LpTasks` |
@@ -162,22 +162,22 @@ As configurações ficam em `src/main/resources/application.yml`. Os valores pad
 | `cache.type` | `redis` |
 | `token.secret` | `encrypted123` |
 
-> ⚠️ Em produção, substitua o `token.secret` por um valor seguro e externalize as credenciais via variáveis de ambiente.
+> ⚠️ In production, replace `token.secret` with a secure value and externalize credentials via environment variables.
 
 ---
 
 ## 🐳 Docker Compose
 
-O arquivo `docker-compose.yml` sobe dois serviços:
+The `docker-compose.yml` file brings up two services:
 
-- **PostgreSQL 13** na porta `5432` — inicializa automaticamente com o script `initialize.sql`
-- **Redis 7.4** na porta `6379`
+- **PostgreSQL 13** on port `5432` — automatically initializes with the `initialize.sql` script
+- **Redis 7.4** on port `6379`
 
 ```bash
-# Subir
+# Bring up
 docker-compose up -d
 
-# Derrubar
+# Tear down
 docker-compose down
 ```
 
@@ -185,51 +185,51 @@ docker-compose down
 
 ## 🗺️ Roadmap
 
-### 🔄 Em andamento
+### 🔄 In progress
 
-- [ ] **Testes unitários e de integração** — cobertura dos services, controllers e filtros de segurança com JUnit 5 e MockK
+- [ ] **Unit and integration tests** — coverage of services, controllers, and security filters with JUnit 5 and MockK
 
 ---
 
-### 🚀 Próximas implementações
+### 🚀 Upcoming implementations
 
-#### Funcionalidades
-- [ ] **Paginação** nos endpoints de listagem (`GET /app/tasks`) para suportar grandes volumes de dados
-- [ ] **Status da tarefa** — adicionar campo `status` com valores como `TODO`, `IN_PROGRESS`, `DONE`
-- [ ] **Data de vencimento** (`dueDate`) por tarefa com suporte a filtro por prazo
-- [ ] **Endpoint de busca combinada** — filtrar tarefas por múltiplos critérios ao mesmo tempo (categoria + prioridade + status)
-- [ ] **Soft delete** — substituir deleção física por lógica com campo `deletedAt`
-- [ ] **Atribuição de tarefas** — vincular tarefas a usuários específicos
-- [ ] **Listagem de tarefas por usuário** — cada usuário vê apenas as próprias tarefas
+#### Features
+- [ ] **Pagination** on listing endpoints (`GET /app/tasks`) to support large volumes of data
+- [ ] **Task status** — add a `status` field with values like `TODO`, `IN_PROGRESS`, `DONE`
+- [ ] **Due date** (`dueDate`) per task with filtering by deadline
+- [ ] **Combined search endpoint** — filter tasks by multiple criteria at once (category + priority + status)
+- [ ] **Soft delete** — replace physical deletion with logical deletion via a `deletedAt` field
+- [ ] **Task assignment** — link tasks to specific users
+- [ ] **Task listing per user** — each user sees only their own tasks
 
-#### Segurança e Auth
-- [ ] **Refresh token** — emitir e rotacionar tokens de atualização para evitar re-login frequente
-- [ ] **Revogação de token** — invalidar tokens ativos via blacklist no Redis
-- [ ] **Rate limiting** — limitar requisições por IP/usuário para prevenir abusos
+#### Security and Auth
+- [ ] **Refresh token** — issue and rotate refresh tokens to avoid frequent re-login
+- [ ] **Token revocation** — invalidate active tokens via a blacklist in Redis
+- [ ] **Rate limiting** — limit requests per IP/user to prevent abuse
 
 #### Cache
-- [ ] **Aplicar `@Cacheable`** nos endpoints de leitura frequente (`getAllTasks`, `getTasksByCategory`)
-- [ ] **Invalidação de cache** automática ao criar, atualizar ou deletar tarefas com `@CacheEvict`
+- [ ] **Apply `@Cacheable`** on frequently read endpoints (`getAllTasks`, `getTasksByCategory`)
+- [ ] **Automatic cache invalidation** when creating, updating, or deleting tasks with `@CacheEvict`
 
-#### Infraestrutura
-- [ ] **Migrations com Flyway** — substituir `ddl-auto: update` por versionamento de schema
-- [ ] **Dockerizar a aplicação** — adicionar a API ao `docker-compose.yml` para rodar tudo com um único comando
-- [ ] **Profiles de ambiente** — separar configurações de `dev`, `test` e `prod`
-- [ ] **Logging estruturado** — adicionar logs com correlação de request ID para rastreabilidade
+#### Infrastructure
+- [ ] **Migrations with Flyway** — replace `ddl-auto: update` with schema versioning
+- [ ] **Dockerize the application** — add the API to `docker-compose.yml` to run everything with a single command
+- [ ] **Environment profiles** — separate configurations for `dev`, `test`, and `prod`
+- [ ] **Structured logging** — add logs with request ID correlation for traceability
 
-#### Documentação
-- [ ] **Swagger / OpenAPI** — documentação interativa dos endpoints via SpringDoc
+#### Documentation
+- [ ] **Swagger / OpenAPI** — interactive endpoint documentation via SpringDoc
 
 ---
 
-## 📐 Padrão de resposta
+## 📐 Response pattern
 
-Todos os endpoints retornam o mesmo envelope:
+All endpoints return the same envelope:
 
 ```json
 {
   "body": { },
-  "message": "Mensagem descritiva",
+  "message": "Descriptive message",
   "statusCode": 200
 }
 ```
