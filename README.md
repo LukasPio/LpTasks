@@ -1,235 +1,72 @@
-# LpTasks API
+# LpTasks
 
-REST API for task management with JWT authentication, built with **Kotlin + Spring Boot**.
+API REST de gerenciamento de tarefas em **Kotlin e Spring Boot 3.3**. Foi criada para praticar autenticação com JWT, persistência relacional, filtros e organização de uma aplicação backend em camadas.
 
----
+## Funcionalidades
 
-## 🛠️ Technologies
+- Cadastro e login de usuários com senha armazenada usando BCrypt e emissão de JWT.
+- Criação, consulta, atualização e exclusão de tarefas.
+- Busca por ID ou título, filtro por categoria e ordenação por prioridade.
+- Respostas em um envelope com `body`, `message` e `statusCode`.
+- PostgreSQL via Spring Data JPA; Docker Compose para o ambiente local.
 
-- **Kotlin** + **Spring Boot 3.3**
-- **PostgreSQL** — data persistence
-- **Redis** — cache
-- **Spring Security** + **JWT (Auth0)** — authentication and authorization
-- **Docker Compose** — local infrastructure
-- **Maven** — dependency management
+**Sobre Redis:** o serviço e as dependências de cache estão configurados no projeto, mas os endpoints ainda **não usam `@Cacheable`/`@CacheEvict`**. Cache com invalidação continua como evolução planejada.
 
----
+## API
 
-## 📋 Prerequisites
+`POST /app/auth/register` e `POST /app/auth/login` são públicos. As rotas de tarefas exigem `Authorization: Bearer <token>`.
 
-- Java 21+
-- Maven
-- Docker and Docker Compose
+| Método | Caminho | Ação |
+| --- | --- | --- |
+| `GET` | `/app/tasks` | Lista tarefas |
+| `GET` | `/app/tasks/id?id=<uuid>` | Busca por ID |
+| `GET` | `/app/tasks/title?taskTitle=<texto>` | Busca por título |
+| `GET` | `/app/tasks/category?category=<categoria>` | Filtra por categoria |
+| `GET` | `/app/tasks/sortByPriority?sortOrder=asc` | Ordena por prioridade |
+| `POST` | `/app/tasks` | Cria uma lista de tarefas |
+| `PUT` | `/app/tasks/{id}` | Atualiza uma tarefa |
+| `DELETE` | `/app/tasks/{id}` | Exclui uma tarefa |
 
----
-
-## 🚀 How to run
-
-**1. Bring up the infrastructure (database and cache):**
-
-```bash
-docker-compose up -d
-```
-
-**2. Run the application:**
+Exemplo de conta de teste e login:
 
 ```bash
-./mvnw spring-boot:run
+curl -s -X POST http://localhost:8080/app/auth/register \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"teste@example.com","password":"senha-local","isAdmin":false}'
+
+curl -s -X POST http://localhost:8080/app/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"teste@example.com","password":"senha-local"}'
 ```
 
-The API will be available at `http://localhost:8080`.
-
----
-
-## 🔐 Authentication
-
-The API uses **JWT Bearer Token**. To access protected endpoints, include the header:
-
-```
-Authorization: Bearer <your_token>
-```
-
-### Authentication endpoints
-
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-----------|
-| `POST` | `/app/auth/register` | Public | Register a new user |
-| `POST` | `/app/auth/login` | Public | Log in and obtain a token |
-
-#### Register user
-```json
-POST /app/auth/register
-{
-  "email": "user@email.com",
-  "password": "password123",
-  "isAdmin": false
-}
-```
-
-#### Login
-```json
-POST /app/auth/login
-{
-  "email": "user@email.com",
-  "password": "password123"
-}
-```
-**Response:**
-```json
-{
-  "body": { "token": "eyJhbGci..." },
-  "message": "Successfully loged in",
-  "statusCode": 200
-}
-```
-
----
-
-## ✅ Task Endpoints
-
-All endpoints below require authentication.
-
-| Method | Endpoint | Description |
-|--------|----------|-----------|
-| `GET` | `/app/tasks` | List all tasks |
-| `GET` | `/app/tasks/id?id={id}` | Find task by ID |
-| `GET` | `/app/tasks/title?taskTitle={title}` | Find tasks by title |
-| `GET` | `/app/tasks/category?category={category}` | Filter by category |
-| `GET` | `/app/tasks/sortByPriority?sortOrder={asc\|desc}` | Sort by priority |
-| `POST` | `/app/tasks` | Create one or more tasks |
-| `PUT` | `/app/tasks/{id}` | Update a task |
-| `DELETE` | `/app/tasks/{id}` | Delete a task |
-
-### Request body (create/update)
+O login devolve o JWT em `body.token`. Para criar tarefas, envie **uma lista JSON** a `POST /app/tasks` com o token:
 
 ```json
 [
   {
-    "title": "Study Kotlin",
-    "description": "Review coroutines and flows",
+    "title": "Estudar Kotlin",
+    "description": "Revisar APIs REST",
     "category": "STUDY",
     "priority": "HIGH"
   }
 ]
 ```
 
-### Available categories
+Categorias previstas: `WORK`, `STUDY`, `HOBBY` e `OTHER`. Prioridades: `LOW`, `MEDIUM` e `HIGH`.
 
-| Value |
-|-------|
-| `WORK` |
-| `STUDY` |
-| `HOBBY` |
-| `OTHER` |
+## Executar localmente
 
-### Available priorities
-
-| Value |
-|-------|
-| `LOW` |
-| `MEDIUM` |
-| `HIGH` |
-
----
-
-## 📦 Project structure
-
-```
-src/main/kotlin/com/lucas/lptasks/
-├── controller/       # Entry layer (REST)
-├── service/          # Business logic
-├── repository/       # Database access
-├── model/            # JPA entities
-├── dto/              # Data transfer objects
-├── security/         # JWT filters and Spring Security configuration
-├── exception/        # Custom exceptions and global handler
-├── enum/             # Category and priority enums
-└── utils/            # Utilities (validation, ApiResponse)
-```
-
----
-
-## 🗄️ Environment variables / Configuration
-
-Settings live in `src/main/resources/application.yml`. The default values are:
-
-| Property | Default |
-|-------------|--------|
-| `server.port` | `8080` |
-| `datasource.url` | `jdbc:postgresql://127.0.0.1:5432/LpTasks` |
-| `datasource.username` | `lukas` |
-| `datasource.password` | `mistery123` |
-| `cache.type` | `redis` |
-| `token.secret` | `encrypted123` |
-
-> ⚠️ In production, replace `token.secret` with a secure value and externalize credentials via environment variables.
-
----
-
-## 🐳 Docker Compose
-
-The `docker-compose.yml` file brings up two services:
-
-- **PostgreSQL 13** on port `5432` — automatically initializes with the `initialize.sql` script
-- **Redis 7.4** on port `6379`
+Requisitos: **JDK 21**, Docker com Compose e Maven (ou Maven Wrapper). Com as portas 5432 e 6379 livres:
 
 ```bash
-# Bring up
-docker-compose up -d
-
-# Tear down
-docker-compose down
+docker compose up -d
+./mvnw spring-boot:run
 ```
 
----
+O Compose inicializa PostgreSQL e Redis; os valores de desenvolvimento estão em `src/main/resources/application.yml`. Troque credenciais e segredo de assinatura antes de usar em outro ambiente. O banco usa `ddl-auto: update`; ainda não há migrações Flyway.
 
-## 🗺️ Roadmap
+## Estrutura e limites
 
-### 🔄 In progress
+`controller/` expõe as rotas; `service/` reúne regras de negócio; `repository/` acessa dados; `security/` contém filtro JWT e configuração de acesso; `dto/` e `exception/` definem os contratos e erros.
 
-- [ ] **Unit and integration tests** — coverage of services, controllers, and security filters with JUnit 5 and MockK
-
----
-
-### 🚀 Upcoming implementations
-
-#### Features
-- [ ] **Pagination** on listing endpoints (`GET /app/tasks`) to support large volumes of data
-- [ ] **Task status** — add a `status` field with values like `TODO`, `IN_PROGRESS`, `DONE`
-- [ ] **Due date** (`dueDate`) per task with filtering by deadline
-- [ ] **Combined search endpoint** — filter tasks by multiple criteria at once (category + priority + status)
-- [ ] **Soft delete** — replace physical deletion with logical deletion via a `deletedAt` field
-- [ ] **Task assignment** — link tasks to specific users
-- [ ] **Task listing per user** — each user sees only their own tasks
-
-#### Security and Auth
-- [ ] **Refresh token** — issue and rotate refresh tokens to avoid frequent re-login
-- [ ] **Token revocation** — invalidate active tokens via a blacklist in Redis
-- [ ] **Rate limiting** — limit requests per IP/user to prevent abuse
-
-#### Cache
-- [ ] **Apply `@Cacheable`** on frequently read endpoints (`getAllTasks`, `getTasksByCategory`)
-- [ ] **Automatic cache invalidation** when creating, updating, or deleting tasks with `@CacheEvict`
-
-#### Infrastructure
-- [ ] **Migrations with Flyway** — replace `ddl-auto: update` with schema versioning
-- [ ] **Dockerize the application** — add the API to `docker-compose.yml` to run everything with a single command
-- [ ] **Environment profiles** — separate configurations for `dev`, `test`, and `prod`
-- [ ] **Structured logging** — add logs with request ID correlation for traceability
-
-#### Documentation
-- [ ] **Swagger / OpenAPI** — interactive endpoint documentation via SpringDoc
-
----
-
-## 📐 Response pattern
-
-All endpoints return the same envelope:
-
-```json
-{
-  "body": { },
-  "message": "Descriptive message",
-  "statusCode": 200
-}
-```
+É um projeto de estudo, não uma API pronta para produção. O cadastro público recebe o campo `isAdmin`, e as tarefas não estão associadas ao usuário autenticado. Testes abrangentes, paginação, cache efetivo e endurecimento da autorização são melhorias futuras.
